@@ -95,7 +95,8 @@ for (i in 8:59){
       r2_egb_ad<-R2_Score(ytest_egb[row_ad,], test[row_ad,5])
       r2_egb_ec<-R2_Score(ytest_egb[row_ec,], test[row_ec,5])
       
-      #################egb#################
+      #################svm#################
+      #normalize the data for svm
       train<-cbind(train[,1],scale(train[,2:5]),center=T,scale=T)
       tuneResult <- tune(svm, train.x=as.matrix(train[,1:4]), train.y=train[,5], ranges = list(gamma= c(0.001, 0.05, 0.25, 1, 2.5), cost= c(1,5,25,100)))
       test<-cbind(test[,1], scale(test[,2:5], center= T, scale=T))
@@ -146,3 +147,8 @@ for (i in 8:59){
 #######################predict the SDG indicator#######################
 #######################################################################
 
+
+
+#######################################################################
+#######################plot the main results###########################
+#######################################################################
