@@ -4,12 +4,8 @@ library(xgboost)
 library(Matrix)
 library(MLmetrics)
 
-#######load the data (csv file in the )
-covid_sdg<-read.csv(file="/Users/abcdefg/Desktop/COVID_SDG/sdg data final_ori.csv")
-
-############################################################
-#######################R2 validataion#######################
-############################################################
+#######load the data (sdg_data.csv file in the root file)
+covid_sdg<-read.csv(file="sdg_data.csv")
 
 ####store the R2 of different models of different responsese across test years
 R2_forest_all_allyear<-vector()
@@ -22,7 +18,7 @@ R2_svm_all_allyear<-vector()
 R2_svm_ad_allyear<-vector()
 R2_svm_ec_allyear<-vector()
 
-###iteratively construct the model and R2 validation on the test sets
+###iteratively construct the models
 for (i in 8:59){
   a<-covid_sdg[,c(1,i)]
   b<-na.omit(a)
@@ -141,14 +137,6 @@ for (i in 8:59){
     R2_svm_ec_allyear<-rbind(R2_svm_ec_allyear,R2_svm_ec)
     print(i)
 }
-
-
-#######################################################################
-#######################predict the SDG indicator#######################
-#######################################################################
-
-
-
-#######################################################################
-#######################plot the main results###########################
-#######################################################################
+R2_all<-cbind(R2_forest_all_allyear,R2_forest_ad_allyear,R2_forest_ec_allyear,R2_egb_all_allyear,
+              R2_egb_ad_allyear,R2_egb_ec_allyear,R2_svm_all_allyear,R2_svm_ad_allyear,R2_svm_ec_allyear)
+#compile the result mannually
