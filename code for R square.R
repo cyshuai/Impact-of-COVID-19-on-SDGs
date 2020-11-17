@@ -6,7 +6,6 @@ library(MLmetrics)
 
 #######load the data (sdg_data.csv file in the root file)
 covid_sdg<-read.csv(file="sdg_data.csv")
-covid_sdg<-read.csv(file="/Users/abcdefg/Desktop/COVID_SDG/sdg_data.csv")
 
 ####store the R2 of different models of different responsese across test years
 R2_forest_all_allyear<-vector()
