@@ -6,6 +6,7 @@ library(MLmetrics)
 
 #######load the data (sdg_data.csv file in the root file)
 covid_sdg<-read.csv(file="sdg_data.csv")
+covid_sdg<-read.csv(file="/Users/abcdefg/Desktop/COVID_SDG/sdg_data.csv")
 
 ####store the R2 of different models of different responsese across test years
 R2_forest_all_allyear<-vector()
@@ -19,7 +20,7 @@ R2_svm_ad_allyear<-vector()
 R2_svm_ec_allyear<-vector()
 
 ###iteratively construct the models
-for (i in 8:59){
+for (i in 7:45){
   a<-covid_sdg[,c(1,i)]
   b<-na.omit(a)
   unique_year<-unique(b[,1]) 
@@ -27,7 +28,7 @@ for (i in 8:59){
   
   gap_year<-2024-last_year
   while (length(unique_year)-gap_year<=0) {
-      gap_year=gap_year-1
+    gap_year=gap_year-1
   }
   
   R2_forest_all<-vector()
@@ -41,102 +42,103 @@ for (i in 8:59){
   R2_svm_ec<-vector()
   
   for (j in 1:gap_year) {
-      last_train_year<-unique_year[length(unique_year)-gap_year]
-      train_ori<-covid_sdg[1:((last_train_year-1989)*217),c(1,5:7,i)]
-      train<-na.omit(train_ori)
-      train_sample<-nrow(train)
-      test_year<-unique_year[length(unique_year)-gap_year+j]
-      test_oori<-covid_sdg[((test_year-1990)*217+1):((test_year-1989)*217),c(1,4:7,i)]
-      test_ori<-na.omit(test_oori)
-      test_ori_ad<-subset(test_ori,Class=="AD")
-      test_ori_ec<-subset(test_ori,Class=="EC")
-      row_ad<-row.names(test_ori_ad)
-      row_ec<-row.names(test_ori_ec)
-      test<-test_ori[,c(1,3:6)]
-      #############random forest############
-      result<-rfcv(train[,1:4], train[,5],cv.fold=3,ntree=100)
-      cv_var_rf<-result$n.var
-      cv_error_rf<-result$error.cv
-      names(cv_error_rf)<-NULL
-      var_num<-cv_var_rf[which.min(cv_error_rf)]
-      forest <- randomForest(x=train[,1:4], y=train[,5], mtry=var_num, ntree=100)
-      ytest_forest <- predict(forest, test[,c(1:4)])
-      r2_forest_all<-R2_Score(ytest_forest, test[,5])
-      r2_forest_ad<-R2_Score(ytest_forest[row_ad], test[row_ad,5])
-      r2_forest_ec<-R2_Score(ytest_forest[row_ec], test[row_ec,5])
-      
-      #################egb#################
-      y <- train[,5]
-      x <- as.matrix(train[,1:4])
-      traindata1 <- data.matrix(x)  
-      traindata2 <- Matrix(traindata1,sparse=T) 
-      traindata3 <- y
-      traindata4 <- list(data=traindata2,label=traindata3)
-      dtrain <- xgb.DMatrix(data = traindata4$data, label = traindata4$label)
-      #choose best eta
-      Mean_mse<-vector()
-      for (k in c(0.01, 0.05, 0.15, 0.3)) {
-        cv <- xgb.cv(data = dtrain, nfold = 3, metrics = list("rmse"), nround=300,
-                     max_depth = 6, eta = k, objective = "reg:squarederror",verbose = F)
-        mean_mse<-min(cv$evaluation_log$test_rmse_mean)
-        Mean_mse<-rbind(Mean_mse,mean_mse)
-      }
-      value<-which.min(Mean_mse)
-      if (value==1) {eta=0.01} else if (value==2) {eta=0.05} else if (value==3) {eta=0.15} else {eta=0.3}
-      #train the model
-      xgb_mobtosta <- xgboost(data = dtrain, eta=eta, nround=300,verbose = F)
-      ytest_egb <- as.data.frame(predict(xgb_mobtosta, as.matrix(test[,1:4])))
-      rownames(ytest_egb)<-rownames(test)
-      r2_egb_all<-R2_Score(ytest_egb, test[,5])
-      r2_egb_ad<-R2_Score(ytest_egb[row_ad,], test[row_ad,5])
-      r2_egb_ec<-R2_Score(ytest_egb[row_ec,], test[row_ec,5])
-      
-      #################svm#################
-      #normalize the data for svm
-      train<-cbind(train[,1],scale(train[,2:5]),center=T,scale=T)
-      tuneResult <- tune(svm, train.x=as.matrix(train[,1:4]), train.y=train[,5], ranges = list(gamma= c(0.001, 0.05, 0.25, 1, 2.5), cost= c(1,5,25,100)))
-      test<-cbind(test[,1], scale(test[,2:5], center= T, scale=T))
-      ytest_svm <- predict(tuneResult$best.model, as.matrix(test[,1:4]))
-      r2_svm_all<-R2_Score(ytest_svm, test[,5])
-      r2_svm_ad<-R2_Score(ytest_svm[row_ad], test[row_ad,5])
-      r2_svm_ec<-R2_Score(ytest_svm[row_ec], test[row_ec,5])
-      
-      #####forest result
-      R2_forest_all<-cbind(R2_forest_all,r2_forest_all)
-      R2_forest_ad<-cbind(R2_forest_ad,r2_forest_ad)
-      R2_forest_ec<-cbind(R2_forest_ec,r2_forest_ec)
-      #####egb result
-      R2_egb_all<-cbind(R2_egb_all,r2_egb_all)
-      R2_egb_ad<-cbind(R2_egb_ad,r2_egb_ad)
-      R2_egb_ec<-cbind(R2_egb_ec,r2_egb_ec)
-      #####svm result
-      R2_svm_all<-cbind(R2_svm_all,r2_svm_all)
-      R2_svm_ad<-cbind(R2_svm_ad,r2_svm_ad)
-      R2_svm_ec<-cbind(R2_svm_ec,r2_svm_ec)
+    last_train_year<-unique_year[length(unique_year)-gap_year]
+    train_ori<-covid_sdg[1:((last_train_year-1989)*217),c(1,4:6,i)]
+    train<-na.omit(train_ori)
+    train_sample<-nrow(train)
+    test_year<-unique_year[length(unique_year)-gap_year+j]
+    test_oori<-covid_sdg[((test_year-1990)*217+1):((test_year-1989)*217),c(1,3:6,i)]
+    test_ori<-na.omit(test_oori)
+    test_ori_ad<-subset(test_ori,Class=="AD")
+    test_ori_ec<-subset(test_ori,Class=="EMDE")
+    row_ad<-row.names(test_ori_ad)
+    row_ec<-row.names(test_ori_ec)
+    test<-test_ori[,c(1,3:6)]
+    #############random forest############
+    result<-rfcv(train[,1:4], train[,5],cv.fold=3,ntree=100)
+    cv_var_rf<-result$n.var
+    cv_error_rf<-result$error.cv
+    names(cv_error_rf)<-NULL
+    var_num<-cv_var_rf[which.min(cv_error_rf)]
+    forest <- randomForest(x=train[,1:4], y=train[,5], mtry=var_num, ntree=100)
+    ytest_forest <- predict(forest, test[,c(1:4)])
+    r2_forest_all<-R2_Score(ytest_forest, test[,5])
+    r2_forest_ad<-R2_Score(ytest_forest[row_ad], test[row_ad,5])
+    r2_forest_ec<-R2_Score(ytest_forest[row_ec], test[row_ec,5])
+    
+    #################egb#################
+    y <- train[,5]
+    x <- as.matrix(train[,1:4])
+    traindata1 <- data.matrix(x)  
+    traindata2 <- Matrix(traindata1,sparse=T) 
+    traindata3 <- y
+    traindata4 <- list(data=traindata2,label=traindata3)
+    dtrain <- xgb.DMatrix(data = traindata4$data, label = traindata4$label)
+    #choose best eta
+    Mean_mse<-vector()
+    for (k in c(0.01, 0.05, 0.15, 0.3)) {
+      cv <- xgb.cv(data = dtrain, nfold = 3, metrics = list("rmse"), nround=300,
+                   max_depth = 6, eta = k, objective = "reg:squarederror",verbose = F)
+      mean_mse<-min(cv$evaluation_log$test_rmse_mean)
+      Mean_mse<-rbind(Mean_mse,mean_mse)
     }
-    length(R2_forest_all)<-8
-    length(R2_forest_ad)<-8
-    length(R2_forest_ec)<-8
-    length(R2_egb_all)<-8
-    length(R2_egb_ad)<-8
-    length(R2_egb_ec)<-8
-    length(R2_svm_all)<-8
-    length(R2_svm_ad)<-8
-    length(R2_svm_ec)<-8
-    #final forest result
-    R2_forest_all_allyear<-rbind(R2_forest_all_allyear,R2_forest_all)
-    R2_forest_ad_allyear<-rbind(R2_forest_ad_allyear,R2_forest_ad)
-    R2_forest_ec_allyear<-rbind(R2_forest_ec_allyear,R2_forest_ec)
-    #finalegb result
-    R2_egb_all_allyear<-rbind(R2_egb_all_allyear,R2_egb_all)
-    R2_egb_ad_allyear<-rbind(R2_egb_ad_allyear,R2_egb_ad)
-    R2_egb_ec_allyear<-rbind(R2_egb_ec_allyear,R2_egb_ec)
-    #final svm result
-    R2_svm_all_allyear<-rbind(R2_svm_all_allyear,R2_svm_all)
-    R2_svm_ad_allyear<-rbind(R2_svm_ad_allyear,R2_svm_ad)
-    R2_svm_ec_allyear<-rbind(R2_svm_ec_allyear,R2_svm_ec)
-    print(i)
+    value<-which.min(Mean_mse)
+    if (value==1) {eta=0.01} else if (value==2) {eta=0.05} else if (value==3) {eta=0.15} else {eta=0.3}
+    #train the model
+    xgb_mobtosta <- xgboost(data = dtrain, eta=eta, nround=300,verbose = F)
+    ytest_egb <- as.data.frame(predict(xgb_mobtosta, as.matrix(test[,1:4])))
+    rownames(ytest_egb)<-rownames(test)
+    r2_egb_all<-R2_Score(ytest_egb, test[,5])
+    r2_egb_ad<-R2_Score(ytest_egb[row_ad,], test[row_ad,5])
+    r2_egb_ec<-R2_Score(ytest_egb[row_ec,], test[row_ec,5])
+    
+    #################svm#################
+    #normalize the data for svm
+    train<-cbind(train[,1],scale(train[,2:5]),center=T,scale=T)
+    tuneResult <- tune(svm, train.x=as.matrix(train[,1:4]), train.y=train[,5], ranges = list(gamma= c(0.001, 0.05, 0.25, 1, 2.5), cost= c(1,5,25,100)))
+    test<-cbind(test[,1], scale(test[,2:5], center= T, scale=T))
+    ytest_svm <- predict(tuneResult$best.model, as.matrix(test[,1:4]))
+    r2_svm_all<-R2_Score(ytest_svm, test[,5])
+    r2_svm_ad<-R2_Score(ytest_svm[row_ad], test[row_ad,5])
+    r2_svm_ec<-R2_Score(ytest_svm[row_ec], test[row_ec,5])
+    
+    #####forest result
+    R2_forest_all<-cbind(R2_forest_all,r2_forest_all)
+    R2_forest_ad<-cbind(R2_forest_ad,r2_forest_ad)
+    R2_forest_ec<-cbind(R2_forest_ec,r2_forest_ec)
+    #####egb result
+    R2_egb_all<-cbind(R2_egb_all,r2_egb_all)
+    R2_egb_ad<-cbind(R2_egb_ad,r2_egb_ad)
+    R2_egb_ec<-cbind(R2_egb_ec,r2_egb_ec)
+    #####svm result
+    R2_svm_all<-cbind(R2_svm_all,r2_svm_all)
+    R2_svm_ad<-cbind(R2_svm_ad,r2_svm_ad)
+    R2_svm_ec<-cbind(R2_svm_ec,r2_svm_ec)
+  }
+  length(R2_forest_all)<-8
+  length(R2_forest_ad)<-8
+  length(R2_forest_ec)<-8
+  length(R2_egb_all)<-8
+  length(R2_egb_ad)<-8
+  length(R2_egb_ec)<-8
+  length(R2_svm_all)<-8
+  length(R2_svm_ad)<-8
+  length(R2_svm_ec)<-8
+  #final forest result
+  R2_forest_all_allyear<-rbind(R2_forest_all_allyear,R2_forest_all)
+  R2_forest_ad_allyear<-rbind(R2_forest_ad_allyear,R2_forest_ad)
+  R2_forest_ec_allyear<-rbind(R2_forest_ec_allyear,R2_forest_ec)
+  #finalegb result
+  R2_egb_all_allyear<-rbind(R2_egb_all_allyear,R2_egb_all)
+  R2_egb_ad_allyear<-rbind(R2_egb_ad_allyear,R2_egb_ad)
+  R2_egb_ec_allyear<-rbind(R2_egb_ec_allyear,R2_egb_ec)
+  #final svm result
+  R2_svm_all_allyear<-rbind(R2_svm_all_allyear,R2_svm_all)
+  R2_svm_ad_allyear<-rbind(R2_svm_ad_allyear,R2_svm_ad)
+  R2_svm_ec_allyear<-rbind(R2_svm_ec_allyear,R2_svm_ec)
+  print(i)
 }
 R2_all<-cbind(R2_forest_all_allyear,R2_forest_ad_allyear,R2_forest_ec_allyear,R2_egb_all_allyear,
               R2_egb_ad_allyear,R2_egb_ec_allyear,R2_svm_all_allyear,R2_svm_ad_allyear,R2_svm_ec_allyear)
 #compile the result mannually
+
