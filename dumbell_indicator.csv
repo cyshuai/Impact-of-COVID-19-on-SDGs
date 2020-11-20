@@ -1,0 +1,42 @@
+﻿SDG,without,with
+SDG 1:Poverty headcount ratio at $3.20/day (% of population),101.793252,90.67140704
+SDG 2:Prevalence of undernourishment (% of population),102.8322819,85.79126359
+"SDG 3:Neonatal mortality rate (per 1,000 live births)",100.4864683,90.45058401
+SDG 3:Life expectancy at birth (years),100.1423679,99.10680728
+SDG 3:Suicide mortality rate (per thousand people) ,102.635578,95.05896665
+SDG 3:Mortality rate attributed to unintentional poisoning (per million people),105.8334542,93.06947913
+SDG 3:Subjective well-being (worst 0-10 best),100.293832,95.41849859
+SDG 3:Physicians (per thousand people),102.418124,102.0497177
+"SDG 4:Children out of school, primary (million people)",103.2185875,89.61185603
+SDG 6:People using safely managed drinking water services (% of population) ,100.4941711,97.77376215
+SDG 6:People using safely managed sanitation services (% of population) ,100.6056273,97.83252224
+SDG 6:People using at least basic sanitation services (% of population),100.0733033,96.40628035
+SDG 7:Access to clean fuels and technologies for cooking (% of population),99.96691069,98.5797178
+SDG 7:Access to electricity (% of population) ,100.5070785,95.35396367
+SDG 8:GDP growth rate (%),113,0
+SDG 8:GDP per capita (constant 2010 thousand US$),101.4334746,93.79501928
+"SDG 8:Services, value added per worker (constant 2010 thousand US$) ",102.1456544,96.5463454
+SDG 8:GDP per person employed (constant 2017 PPP $) ,100.3883064,96.78185274
+"SDG 8:Wage and salaried workers, total (% of total employment)",100.0480823,96.81678315
+"SDG 8:Automated teller machines per 100,000 adults (number)",101.390346,96.82596057
+"SDG 9:Air transport, freight (billion ton-km) ",101.6721778,97.49366804
+"SDG 9:Air transport, passengers carried (billion people)",110.8591877,70.41816697
+SDG 9:Logistics Performance Index (worst 1-5 best),100.6770758,94.84721266
+SDG 9:Manufacturing (constant 2010 thousand US$/capita),101.7723359,94.38429783
+SDG 9:Researchers in R&D (per thousand people),101.4342386,97.28009761
+SDG 9:Triadic patent families filed (per million population),103.0784876,91.87383319
+SDG 10:Labour (constant 2010 thousand US$/capita),103.0124468,96.3662733
+"SDG 11:Access to improved water source, piped (% of urban population)",103.124291,99.43130437
+SDG 12:Forest rents (constant 2010 thousand US$/capita) ,99.34808781,118.5136
+SDG 12:Electronic waste generated (kg/capita),99.21375559,101.1528457
+SDG 13:Energy-related CO2 emissions (tCO/capita),97.33575142,106.1542026
+SDG 14:Total fisheries production (kg/capita) ,97.76935754,121.68887
+SDG 15:Total reported number of Standard Material Transfer Agreements (SMTAs) (thousand),99.33400143,98.28919366
+SDG 16:Corruption Perception Index (worst 0-100 best),100.7550979,88.34512429
+SDG 17:Tax revenue (constant 2010 thousand US$/capita) ,100.7522581,92.7633169
+SDG 17:Domestic budget funded by domestic taxes (constant 2010 US$/capita),100.930346,95.62913502
+SDG 17:Government spending on health and education (constant 2010 US$/capita),106.9124115,113.8482682
+SDG 17:Volume of remittances (constant 2010 US$/capita),101.0305173,91.66699401
+SDG 17:Foreign direct investment inflows (constant 2010 US$/capita),102.0821553,88.26746926
+"SDG 17:Fxed Internet broadband subscriptions, by ANY speed (billion)",102.1499604,98.11519074
+SDG 17:Exports of goods and services (constant 2010 thousand US$/capita) ,100.495811,88.06872579
