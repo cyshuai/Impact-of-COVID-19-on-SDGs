@@ -46,6 +46,7 @@ ggplot(SDG_year_PI.m,aes(x= Year,y=median,color=factor(Index))) +
 
 ###plot Figure 3
 Boxplot<- read.csv(file="Boxplot.csv")
+
 Boxplot1<-Boxplot[,1:2]
 Boxplot1.m<-melt(Boxplot1,measure.vars=factor(colnames(Boxplot1)[c(1:2)]))
 
