@@ -216,3 +216,94 @@ for (i in c(2019:2024)) {
   PI_with<-rbind(PI_with,final)
 }
 
+                
+#compile the predicted data to unify the unit 
+#global data
+PI_without_0.95<-PI_without[c(3,6,9,12,15,18),3:41]
+PI_without_0.5<-PI_without[c(2,5,8,11,14,17),3:41]
+PI_without_0.05<-PI_without[c(1,4,7,10,13,16),3:41]
+PI_with_0.95<-PI_with[c(3,6,9,12,15,18),3:41]
+PI_with_0.5<-PI_with[c(2,5,8,11,14,17),3:41]
+PI_with_0.05<-PI_with[c(1,4,7,10,13,16),3:41]
+unit<-cbind(c(7365945458,7461407139,7535908347,7608572374,7679688914,7749712318),rep(188,6))  #calculate per capita value or mean value
+same_unit<-cbind(100,100,1,1,1000,1000000,1,1000,0.0000001,1,1,1,1,1,0.001,0.001,1,1,0.001,0.000000001,1,0.00001,1000,1,0.00001,1,0.001,0.000000001,1,1000,1000,1,0.001,0.001,0.001,1,1000,0.000000001,0.00001)
+unit_direction<-c(1,1,2,2,1,1,2,1,3,2,2,2,2,2,2,2,2,2,3,3,2,1,1,2,1,1,1,3,1,1,3,2,1,1,1,1,1,3,1)
+                
+Af_compile_without_0.5<-vector()
+for (i in 1:39) {
+  if (unit_direction[i]==1) {af_compile=PI_without_0.5[,i]/unit[,1]}
+  else if (unit_direction[i]==2) {af_compile=PI_without_0.5[,i]/unit[,2]}
+  else {af_compile=PI_without_0.5[,i]}
+  af_compile_new<-af_compile*same_unit[,i]
+  Af_compile_without_0.5<-cbind(Af_compile_without_0.5,af_compile_new)
+}
+
+Af_compile_with_0.5<-vector()
+for (i in 1:39) {
+  if (unit_direction[i]==1) {af_compile=PI_with_0.5[,i]/unit[,1]}
+  else if (unit_direction[i]==2) {af_compile=PI_with_0.5[,i]/unit[,2]}
+  else {af_compile=PI_without_0.5[,i]}
+  af_compile_new<-af_compile*same_unit[,i]
+  Af_compile_with_0.5<-cbind(Af_compile_with_0.5,af_compile_new)
+}
+
+#emde data
+PI_without_ec_0.95<-PI_without_ec[c(3,6,9,12,15,18),3:41]
+PI_without_ec_0.5<-PI_without_ec[c(2,5,8,11,14,17),3:41]
+PI_without_ec_0.05<-PI_without_ec[c(1,4,7,10,13,16),3:41]
+PI_with_ec_0.95<-PI_with_ec[c(3,6,9,12,15,18),3:41]
+PI_with_ec_0.5<-PI_with_ec[c(2,5,8,11,14,17),3:41]
+PI_with_ec_0.05<-PI_with_ec[c(1,4,7,10,13,16),3:41]
+unit<-cbind(c(6312936357,6402500798,6473923472,6543815739,6612397551,6680029726),rep(150,6))  #calculate per capita value or mean value
+same_unit<-cbind(100,100,1,1,1000,1000000,1,1000,0.0000001,1,1,1,1,1,0.001,0.001,1,1,0.001,0.000000001,1,0.00001,1000,1,0.00001,1,0.001,0.000000001,1,1000,1000,1,0.001,0.001,0.001,1,1000,0.000000001,0.00001)
+unit_direction<-c(1,1,2,2,1,1,2,1,3,2,2,2,2,2,2,2,2,2,3,3,2,1,1,2,1,1,1,3,1,1,3,2,1,1,1,1,1,3,1)
+
+Af_compile_without_ec_0.5<-vector()
+for (i in 1:39) {
+  if (unit_direction[i]==1) {af_compile=PI_without_ec_0.5[,i]/unit[,1]}
+  else if (unit_direction[i]==2) {af_compile=PI_without_ec_0.5[,i]/unit[,2]}
+  else {af_compile=PI_without_ec_0.5[,i]}
+  af_compile_new<-af_compile*same_unit[,i]
+  Af_compile_without_ec_0.5<-cbind(Af_compile_without_ec_0.5,af_compile_new)
+}
+Af_compile_without_ec_0.5<-Af_compile_without_ec_0.5[,c(1,2,5,8,9,11,13,16,17,19,20,22,23,25,26,27,28,29,30,33,34,35,36,37,39)]
+
+Af_compile_with_ec_0.5<-vector()
+for (i in 1:39) {
+  if (unit_direction[i]==1) {af_compile=PI_with_ec_0.5[,i]/unit[,1]}
+  else if (unit_direction[i]==2) {af_compile=PI_with_ec_0.5[,i]/unit[,2]}
+  else {af_compile=PI_without_ec_0.5[,i]}
+  af_compile_new<-af_compile*same_unit[,i]
+  Af_compile_with_ec_0.5<-cbind(Af_compile_with_ec_0.5,af_compile_new)
+}
+Af_compile_with_ec_0.5<-Af_compile_with_ec_0.5[,c(1,2,5,8,9,11,13,16,17,19,20,22,23,25,26,27,28,29,30,33,34,35,36,37,39)]
+
+#ad data
+PI_without_ad_0.95<-PI_without_ad[c(3,6,9,12,15,18),3:41]
+PI_without_ad_0.5<-PI_without_ad[c(2,5,8,11,14,17),3:41]
+PI_without_ad_0.05<-PI_without_ad[c(1,4,7,10,13,16),3:41]
+PI_with_ad_0.95<-PI_with_ad[c(3,6,9,12,15,18),3:41]
+PI_with_ad_0.5<-PI_with_ad[c(2,5,8,11,14,17),3:41]
+PI_with_ad_0.05<-PI_with_ad[c(1,4,7,10,13,16),3:41]
+unit<-cbind(c(1046153388,1052080899,1055215724,1058071788,1060706247,1063197256),rep(38,6))  #calculate per capita value or mean value
+
+
+Af_compile_without_ad_0.5<-vector()
+for (i in 1:39) {
+  if (unit_direction[i]==1) {af_compile=PI_without_ad_0.5[,i]/unit[,1]}
+  else if (unit_direction[i]==2) {af_compile=PI_without_ad_0.5[,i]/unit[,2]}
+  else {af_compile=PI_without_ad_0.5[,i]}
+  af_compile_new<-af_compile*same_unit[,i]
+  Af_compile_without_ad_0.5<-cbind(Af_compile_without_ad_0.5,af_compile_new)
+}
+Af_compile_without_ad_0.5<-Af_compile_without_ad_0.5[,c(2,19,20,22,23,24,25,26,27,28,29,33,34,35,38,39)]
+
+Af_compile_with_ad_0.5<-vector()
+for (i in 1:39) {
+  if (unit_direction[i]==1) {af_compile=PI_with_ad_0.5[,i]/unit[,1]}
+  else if (unit_direction[i]==2) {af_compile=PI_with_ad_0.5[,i]/unit[,2]}
+  else {af_compile=PI_with_ad_0.5[,i]}
+  af_compile_new<-af_compile*same_unit[,i]
+  Af_compile_with_ad_0.5<-cbind(Af_compile_with_ad_0.5,af_compile_new)
+}
+Af_compile_with_ad_0.5<-Af_compile_with_ad_0.5[,c(2,19,20,22,23,24,25,26,27,28,29,33,34,35,38,39)]
